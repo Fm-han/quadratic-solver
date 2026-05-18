@@ -3,205 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>涓€鍏冧簩娆℃柟绋嬫眰瑙ｅ櫒</title>
+    <title>一元二次方程求解器</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fafafa; min-height: 100vh; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; }
-        .card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 24px; margin-bottom: 20px; }
-        h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 20px; color: #333; text-align: center; }
-        .title { font-size: 1.25rem; font-weight: 600; margin-bottom: 16px; color: #333; }
-        label { display: block; margin-bottom: 8px; color: #555; font-weight: 500; }
-        input { border: 1px solid #ddd; border-radius: 4px; padding: 8px 12px; width: 100%; box-sizing: border-box; margin-bottom: 16px; }
-        button { background: #007bff; color: #fff; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        button.calc-btn { background: #28a745; width: 100%; padding: 12px; font-size: 1.1rem; }
-        .equation-display { text-align: center; font-size: 1.5rem; padding: 20px; background: #f8f9fa; border-radius: 4px; margin-bottom: 16px; font-family: monospace; }
-        .result { background: #f0f7ff; border: 1px solid #007bff; border-radius: 4px; padding: 16px; margin-top: 16px; }
-        .result-section { margin-bottom: 16px; }
-        .result-section:last-child { margin-bottom: 0; }
-        .result-label { color: #666; font-size: 0.9rem; margin-bottom: 8px; }
-        .result-value { font-size: 1.2rem; font-weight: 600; color: #007bff; }
-        .discriminant { display: inline-block; padding: 8px 16px; background: #fff; border-radius: 4px; margin: 8px 0; }
-        .solutions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .solution-box { background: #fff; padding: 16px; border-radius: 8px; text-align: center; }
-        .solution-label { color: #666; font-size: 0.85rem; }
-        .solution-value { color: #28a745; font-size: 1.3rem; font-weight: 700; margin-top: 4px; }
-        .no-solution { color: #dc3545; font-size: 1.1rem; font-weight: 600; text-align: center; padding: 20px; }
-        .formula { background: #f8f9fa; padding: 12px; border-radius: 4px; font-family: monospace; font-size: 0.9rem; }
-        .error { color: #dc3545; margin-top: 8px; font-size: 0.9rem; }
-        .graph-placeholder { background: #f8f9fa; padding: 40px; text-align: center; border-radius: 4px; color: #999; margin-top: 16px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fafafa; padding: 20px; }
+        .container { max-width: 700px; margin: 0 auto; }
+        h1 { font-size: 1.25rem; font-weight: 600; margin-bottom: 16px; color: #333; }
+        .card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 24px; margin-bottom: 16px; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 8px; color: #333; font-weight: 500; }
+        input { padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; width: 80px; text-align: center; }
+        .equation-input { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .equation-input span { font-size: 1.3rem; }
+        .btn { padding: 8px 20px; border-radius: 4px; cursor: pointer; border: none; font-size: 14px; margin-right: 8px; }
+        .btn-blue { background: #007bff; color: #fff; }
+        .btn-gray { background: #6c757d; color: #fff; }
+        .result { background: #f5f5f5; padding: 20px; border-radius: 8px; margin-top: 16px; }
+        .result-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 12px; }
+        .result-item { padding: 8px 0; font-family: monospace; font-size: 1.1rem; }
+        .discriminant { background: #e9ecef; padding: 12px; border-radius: 4px; margin-bottom: 12px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>涓€鍏冧簩娆℃柟绋嬫眰瑙ｅ櫒</h1>
+        <h1>一元二次方程求解器</h1>
         <div class="card">
-            <div class="equation-display" id="equationDisplay">
-                ax虏 + bx + c = 0
-            </div>
-            
-            <label>绯绘暟 a (浜屾椤圭郴鏁?</label>
-            <input type="number" id="coefA" placeholder="杈撳叆 a 鐨勫€? value="1" step="any">
-            
-            <label>绯绘暟 b (涓€娆￠」绯绘暟)</label>
-            <input type="number" id="coefB" placeholder="杈撳叆 b 鐨勫€? value="-3" step="any">
-            
-            <label>绯绘暟 c (甯告暟椤?</label>
-            <input type="number" id="coefC" placeholder="杈撳叆 c 鐨勫€? value="2" step="any">
-            
-            <button class="calc-btn" onclick="solve()">姹傝В鏂圭▼</button>
-            <button onclick="clearResult()" style="background:#6c757d; width:100%; margin-top:10px;">娓呴櫎</button>
-            
-            <div id="result" class="result" style="display:none;">
-                <div class="result-section">
-                    <div class="result-label">鍒ゅ埆寮?螖 = b虏 - 4ac</div>
-                    <div id="discriminant" class="discriminant"></div>
-                </div>
-                
-                <div id="solutionsSection">
-                    <div class="result-label">瑙?/div>
-                    <div id="solutions" class="solutions"></div>
-                </div>
-                
-                <div class="graph-placeholder">
-                    鏂圭▼鏇茬嚎鍙湪瀹屾暣鐨勫浘琛ㄥ伐鍏蜂腑鏌ョ湅
+            <p style="margin-bottom:16px;color:#666;">求 ax² + bx + c = 0 的解</p>
+            <div class="form-group">
+                <label>输入系数</label>
+                <div class="equation-input">
+                    <input type="number" id="a" value="1" step="any">
+                    <span>x² +</span>
+                    <input type="number" id="b" value="5" step="any">
+                    <span>x +</span>
+                    <input type="number" id="c" value="6" step="any">
+                    <span>= 0</span>
                 </div>
             </div>
-            <div id="error" class="error" style="display:none;"></div>
-        </div>
-        
-        <div class="card">
-            <div class="title">姹傛牴鍏紡</div>
-            <div class="formula">
-                螖 = b虏 - 4ac<br><br>
-                螖 > 0: 涓や釜涓嶇浉绛夌殑瀹炴牴<br>
-                螖 = 0: 涓や釜鐩哥瓑鐨勫疄鏍?br>
-                螖 < 0: 涓や釜鍏辫江澶嶆牴
+            <button class="btn btn-blue" onclick="solve()">求解</button>
+            <button class="btn btn-gray" onclick="clearCalc()">清空</button>
+            <div class="result" id="result" style="display:none;">
+                <div class="discriminant" id="discriminant"></div>
+                <div id="solutions"></div>
             </div>
-            <p style="color:#666; font-size:0.9rem; margin-top:12px;">
-                x = (-b 卤 鈭毼? / 2a
-            </p>
         </div>
     </div>
-
     <script>
-        function updateDisplay() {
-            const a = parseFloat(document.getElementById('coefA').value) || 0;
-            const b = parseFloat(document.getElementById('coefB').value) || 0;
-            const c = parseFloat(document.getElementById('coefC').value) || 0;
-            
-            let terms = [];
-            
-            if (a !== 0) {
-                if (a === 1) terms.push('x虏');
-                else if (a === -1) terms.push('-x虏');
-                else terms.push(`${a}x虏`);
-            }
-            
-            if (b !== 0) {
-                if (b === 1) terms.push('+ x');
-                else if (b === -1) terms.push('- x');
-                else if (b > 0) terms.push(`+ ${b}x`);
-                else terms.push(`- ${Math.abs(b)}x`);
-            }
-            
-            if (c !== 0) {
-                if (c > 0) terms.push(`+ ${c}`);
-                else terms.push(`- ${Math.abs(c)}`);
-            }
-            
-            const eq = terms.length > 0 ? terms.join(' ') : '0';
-            document.getElementById('equationDisplay').textContent = `${eq} = 0`;
-        }
-
-        document.getElementById('coefA').addEventListener('input', updateDisplay);
-        document.getElementById('coefB').addEventListener('input', updateDisplay);
-        document.getElementById('coefC').addEventListener('input', updateDisplay);
-
         function solve() {
-            const a = parseFloat(document.getElementById('coefA').value);
-            const b = parseFloat(document.getElementById('coefB').value);
-            const c = parseFloat(document.getElementById('coefC').value);
-            
-            const resultDiv = document.getElementById('result');
-            const errorDiv = document.getElementById('error');
-            
-            resultDiv.style.display = 'none';
-            errorDiv.style.display = 'none';
+            const a = parseFloat(document.getElementById('a').value);
+            const b = parseFloat(document.getElementById('b').value);
+            const c = parseFloat(document.getElementById('c').value);
             
             if (isNaN(a) || isNaN(b) || isNaN(c)) {
-                errorDiv.textContent = '璇疯緭鍏ユ湁鏁堢殑鏁板瓧';
-                errorDiv.style.display = 'block';
+                alert('请输入有效的数字');
                 return;
             }
             
             if (a === 0) {
-                errorDiv.textContent = 'a 涓嶈兘涓洪浂锛堣繖鏄竴鍏冧簩娆℃柟绋嬶級';
-                errorDiv.style.display = 'block';
+                // Linear equation
+                if (b === 0) {
+                    document.getElementById('result').innerHTML = '<div class="result"><strong>这不是一个有效方程</strong></div>';
+                } else {
+                    const x = -c / b;
+                    document.getElementById('result').innerHTML = `<div class="result">
+                        <div class="result-title">一次方程 ${b}x + ${c} = 0</div>
+                        <div class="result-item">x = ${x.toFixed(6)}</div>
+                    </div>`;
+                }
+                document.getElementById('result').style.display = 'block';
                 return;
             }
             
             const discriminant = b * b - 4 * a * c;
-            const discriminantEl = document.getElementById('discriminant');
-            const solutionsEl = document.getElementById('solutions');
+            document.getElementById('discriminant').textContent = `判别式 Δ = b² - 4ac = ${b}² - 4×${a}×${c} = ${discriminant}`;
             
-            discriminantEl.textContent = `螖 = ${b}虏 - 4脳${a}脳${c} = ${discriminant}`;
+            let html = '<div class="result-title">求解结果：</div>';
             
             if (discriminant > 0) {
-                const sqrtD = Math.sqrt(discriminant);
-                const x1 = (-b + sqrtD) / (2 * a);
-                const x2 = (-b - sqrtD) / (2 * a);
-                
-                solutionsEl.innerHTML = `
-                    <div class="solution-box">
-                        <div class="solution-label">x鈧?/div>
-                        <div class="solution-value">${formatNumber(x1)}</div>
-                    </div>
-                    <div class="solution-box">
-                        <div class="solution-label">x鈧?/div>
-                        <div class="solution-value">${formatNumber(x2)}</div>
-                    </div>
-                `;
+                const x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                const x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+                html += `<div class="result-item">x₁ = ${x1.toFixed(6)}</div>`;
+                html += `<div class="result-item">x₂ = ${x2.toFixed(6)}</div>`;
             } else if (discriminant === 0) {
                 const x = -b / (2 * a);
-                solutionsEl.innerHTML = `
-                    <div class="solution-box" style="grid-column: span 2;">
-                        <div class="solution-label">閲嶆牴 x鈧?= x鈧?/div>
-                        <div class="solution-value">${formatNumber(x)}</div>
-                    </div>
-                `;
+                html += `<div class="result-item">x = ${x.toFixed(6)} (重根)</div>`;
             } else {
                 const realPart = -b / (2 * a);
                 const imagPart = Math.sqrt(-discriminant) / (2 * a);
-                
-                solutionsEl.innerHTML = `
-                    <div class="solution-box">
-                        <div class="solution-label">x鈧?/div>
-                        <div class="solution-value" style="color:#6f42c1;">${formatNumber(realPart)} + ${formatNumber(imagPart)}i</div>
-                    </div>
-                    <div class="solution-box">
-                        <div class="solution-label">x鈧?/div>
-                        <div class="solution-value" style="color:#6f42c1;">${formatNumber(realPart)} - ${formatNumber(imagPart)}i</div>
-                    </div>
-                `;
+                html += `<div class="result-item">x₁ = ${realPart.toFixed(4)} + ${imagPart.toFixed(4)}i</div>`;
+                html += `<div class="result-item">x₂ = ${realPart.toFixed(4)} - ${imagPart.toFixed(4)}i</div>`;
+                html += `<div style="color:#666;margin-top:8px;">(两个共轭复根)</div>`;
             }
             
-            resultDiv.style.display = 'block';
+            document.getElementById('solutions').innerHTML = html;
+            document.getElementById('result').style.display = 'block';
         }
-
-        function formatNumber(n) {
-            if (Number.isInteger(n)) return n.toString();
-            return n.toFixed(4).replace(/\.?0+$/, '');
-        }
-
-        function clearResult() {
-            document.getElementById('coefA').value = '';
-            document.getElementById('coefB').value = '';
-            document.getElementById('coefC').value = '';
-            document.getElementById('equationDisplay').textContent = 'ax虏 + bx + c = 0';
+        
+        function clearCalc() {
+            document.getElementById('a').value = 1;
+            document.getElementById('b').value = 5;
+            document.getElementById('c').value = 6;
             document.getElementById('result').style.display = 'none';
-            document.getElementById('error').style.display = 'none';
         }
     </script>
 </body>
